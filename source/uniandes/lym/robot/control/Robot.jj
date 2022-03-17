@@ -72,6 +72,10 @@ TOKEN: /* Nombres de Comandos */
 		
 
 }
+TOKEN:
+{
+  <BLOCK: (<T_MOVER>|<T_TURNRIGHT>|<T_PONER>|<T_RECOGER>|<T_POP>)*>
+}
 
 TOKEN :
 {
@@ -87,6 +91,45 @@ TOKEN :
 		|  	<#DIGIT: ["0"-"9"] >
 }
 
+TOKEN: /*Condicionales posibles.*/
+{
+	<T_FACING: "facing-p"(["0"-"3"])>
+	|  <T_CANPUT_UP: "can-put-p"(<T_BALOONS>|<T_CHIPS>)(<NUMERO>)>
+	|  <T_CANPICK_UP: "can-pick-p"(<T_BALOONS>|<T_CHIPS>)(<NUMERO>)>
+	|  <T_CANMOVE: "can-move-p"(["0"-"3"])>
+	|  <T_NOT: "not"(<T_IF>)>
+}
+
+TOKEN:
+{
+  <COND: (<T_FACING>|<T_CANPUT_UP>|<T_CANPICK_UP>|<T_CANMOVE>|<T_NOT>)>
+}
+
+
+TOKEN:/*if*/
+{
+  <T_IF: "(""if" (<COND>)(<BLOCK>)(<BLOCK>)")">
+}
+
+
+TOKEN: /*Ambos Repeat*/
+{
+  <T_REPEAT: "(""repeat" (<COND>)(BLOCK)")">
+}
+
+TOKEN:
+{
+  <T_REPEATTIMES: "(""repeat"(<NUMERO>)(<BLOCK>)")">
+}
+
+TOKEN:/*Defun*/
+{
+  <T_DEFVAR: "(""defun""("((<CHAR>)*(" ")+)*")"(<BLOCK>)")">
+}
+TOKEN:/*Chars*/
+{
+  <CHAR: (["a"-"z"]|["A"-"Z"]|["0"-"9"])>
+}
 
 	boolean command(StringBuffer sistema) :
 	{	
