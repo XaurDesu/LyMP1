@@ -114,7 +114,7 @@ TOKEN:/*if*/
 
 TOKEN: /*Ambos Repeat*/
 {
-  <T_REPEAT: "(""repeat" (<COND>)(BLOCK)")">
+  <T_REPEAT: "(""repeat" (<COND>)(<BLOCK>)")">
 }
 
 TOKEN:
@@ -146,6 +146,7 @@ TOKEN:/*Chars*/
 		|  <T_PONER> "("  objetoPoner() ")"					  			
 		|  <T_RECOGER> "("  objetoRecoger()  ")"	
 	    |  < T_POP > "(" x=numero() ")" {world.popBalloons(x); salida = "Comando:  Pop";}
+	    | <T_IF> "(" manejoIf() ")"
 		) "\n" 
 
 		{
@@ -184,8 +185,63 @@ TOKEN:/*Chars*/
 
 	}
 
-	
-	
+	void manejoIf():
+	{
+	  int x;
+	  boolean es;
+
+	  StringBuffer exp1;
+	  StringBuffer exp2;
+
+	  switch(es) {
+		case(true):
+			command(exp1);
+			break;
+		case(false):
+			command(exp2);
+			break;
+	  }
+	  
+	}
+	{
+	 (
+	  <T_IF> ","
+
+	  exp1 = <BLOCK>
+	  exp2 = <BLOCK>
+	  
+	  switch(<COND>) 
+			case(<T_FACING>): 
+				x = numero(); 
+				es = (world.getFacing() == x);
+				break;
+			case(<T_CANPUTUP>):  
+	    		x = numero();
+	    		if (<T_BALOONS>) {
+	    		  	es = (world.getMyBalloons() <= x);
+	    		  }
+	    		else {
+					es = (world.getMyChips() <= x);
+	    		  }
+	    		break;
+			case(<T_CANPICKUP>):
+				x  = numero();
+				if (<T_BALOONS>) { 
+					es = (world.CountBalloons() >= x);
+				}
+				else {
+					es = (world.chipsExist());
+				  }
+				break;
+			case(<T_CANMOVE>):
+				es = !(world.isBlocked(world.getPosition()));
+				break;
+			case(<T_NOT>):
+				es = !(<T_IF>);
+				break;
+	)
+	}
+
 
 	/**
 	 *  reconoce un numero entero sin signo
